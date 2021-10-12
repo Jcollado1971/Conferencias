@@ -12,7 +12,10 @@
 </style>
 
     {#<h1>
-        Hello ......................Comento  este código motivo,  error
+        Hello ......................
+        
+        Comento  este código motivo,  error
+        
         {{ controller_name }}
         ! ✅
     </h1>#}
@@ -51,7 +54,7 @@
 
         <p>
 
-            <a href="{{ path('conference', { id: conference.id }) }}">
+        <a href="{{ path('conference', { slug: conference.slug }) }}">View</a>
                 View
             </a>
 
