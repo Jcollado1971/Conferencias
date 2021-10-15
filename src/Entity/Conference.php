@@ -112,6 +112,8 @@ class Conference
     /**
      * @return Collection|Comment[]
      */
+
+     
     public function getComments(): Collection
     {
         return $this->comments;

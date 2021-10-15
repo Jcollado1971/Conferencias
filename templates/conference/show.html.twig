@@ -15,9 +15,9 @@
         {% if comments|length > 0 %}
 
                 <div>
-                        There are 
+                        Hay 
                         {{ comments|length }}
-                        comments.
+                        commentario.
                 </div>
 
                 {% for comment in comments %}
@@ -42,15 +42,14 @@
                         </a>
                 {% endif %}
 
-                {% if next < comments|length %}
-                        <a href="{{ path('conference', { id: conference.id, offset: next }) }}">
-                                Next
-                        </a>
-                {% endif %}
+               
 
         {% else %}
                 <div>
-                        No comments have been posted yet for this conference.
+                        Aún no se han publicado comentarios para esta conferencia.
                 </div>
         {% endif %}
+
+                <h2>Agrege sus comentarios</h2> 
+                        {{ form(comment_form) }}
 {% endblock %}

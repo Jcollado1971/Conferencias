@@ -28,15 +28,6 @@ class ConferenceRepository extends ServiceEntityRepository
 
 
 
-
-
-
-
-
-
-
-
-
     // /**
     //  * @return Conference[] Returns an array of Conference objects
     //  */
