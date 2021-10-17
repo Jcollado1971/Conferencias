@@ -29,6 +29,10 @@ class ConferenceController extends AbstractController
     }
 
     #[Route('/', name: 'homepage')]
+
+
+
+    
     public function index(ConferenceRepository $conferenceRepository): Response
     {
         $conferences = $conferenceRepository->findAll();
