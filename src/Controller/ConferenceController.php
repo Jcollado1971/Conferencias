@@ -34,18 +34,43 @@ class ConferenceController extends AbstractController
     }
 
     #[Route('/', name: 'homepage')]
-
-
-
-    
     public function index(ConferenceRepository $conferenceRepository): Response
     {
-        $conferences = $conferenceRepository->findAll();
-        return $this->render('conference/index.html.twig', [
-            'conferences' => $conferences,
-        ]);
+        //$conferences = $conferenceRepository->findAll();
+
+        $response = new Response($this->twig->render('conference/index.html.twig', [
+            'conferences' => $conferenceRepository->findAll(),
+        ]));
+        $response->setSharedMaxAge(3600);
+
+        return $response;
     }
-    #[Route('/coublic fnference/{slug}', name: 'conference')]
+
+
+
+
+
+
+
+    #[Route('/conference_header', name: 'conference_header')]
+    public function conferenceHeader(ConferenceRepository $conferenceRepository): Response
+    {
+        $response = new Response($this->twig->render('conference/header.html.twig', [
+            'conferences' => $conferenceRepository->findAll(),
+
+        ]));
+
+        $response->setSharedMaxAge(3600);
+        return $response;
+
+
+
+    }
+
+
+
+
+    #[Route('/conference/{slug}', name: 'conference')]
     public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir): Response
     {
 
@@ -75,12 +100,12 @@ class ConferenceController extends AbstractController
             $this->entityManager->flush();
 
             $context = [
-                                'user_ip' => $request->getClientIp(),
-                                'user_agent' => $request->headers->get('user-agent'),
-                                'referrer' => $request->headers->get('referer'),
-                                'permalink' => $request->getUri(),
-                            ];
-                            
+                'user_ip' => $request->getClientIp(),
+                'user_agent' => $request->headers->get('user-agent'),
+                'referrer' => $request->headers->get('referer'),
+                'permalink' => $request->getUri(),
+            ];
+
 
 
             $this->entityManager->flush();
