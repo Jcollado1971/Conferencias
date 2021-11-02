@@ -1,55 +1,63 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-        Libro de Conferencias - 
-        {{ conference }}
-{% endblock %}
+{% block title %}Libro de conferencias- {{ conference }}{% endblock %}
 
 {% block body %}
+    <h2 class="mb-5">
+        {{ conference }} Conference
+    </h2>
 
-        <h2>
-                {{ conference }}
-                Conference
-        </h2>
-
-        {% if comments|length > 0 %}
-
-                <div>
-                        Hay 
-                        {{ comments|length }}
-                        commentario.
-                </div>
-
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            {% if comments|length > 0 %}
                 {% for comment in comments %}
-                        {% if comment.photofilename %}
-                                <img src="{{ asset('uploads/photos/' ~ comment.photofilename) }}" />
-                        {% endif %}
+                    <div class="media shadow border rounded-lg p-3 mb-4">
+                        <div class="comment-img mr-3">
+                            {% if comment.photofilename %}
+                                <a href="{{ asset('uploads/photos/' ~ comment.photofilename) }}" target="_blank">
+                                    <img src="{{ asset('uploads/photos/' ~ comment.photofilename) }}" />
+                                </a>
+                            {% endif %}
+                        </div>
 
-                        <p>
-                                {{ comment.text }}
-                        </p>
+                        <div class="media-body">
+                            <h4 class="font-weight-light mb-0">
+                                {{ comment.author }}
+                            </h4>
+
+                            <div class="mb-2">
+                                <small class="text-muted text-uppercase">
+                                    {{ comment.createdAt|format_datetime('medium', 'short') }}
+                                </small>
+                            </div>
+
+                            <div class="comment-text">
+                                {{ comment.text|nl2br }}
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
-
+                <div>There are {{ comments|length }} comments.</div>
                 {% if previous >= 0 %}
-                        <a href="{{ path('conference', { slug: conference.slug, offset: previous }) }}">Previous</a>
-                                Anterior
-                        </a>
+                    <a href="{{ path('conference', { slug: conference.slug, offset: previous }) }}">Previous</a>
                 {% endif %}
-
                 {% if next < comments|length %}
-                <a href="{{ path('conference', { slug: conference.slug, offset: next }) }}">Next</a>
-                                Siguiente
-                        </a>
+                    <a href="{{ path('conference', { slug: conference.slug, offset: next }) }}">Next</a>
                 {% endif %}
-
-               
-
-        {% else %}
-                <div>
-                        Aún no se han publicado comentarios para esta conferencia.
+            {% else %}
+                <div class="text-center">
+                    No hay comentarios para esta conferencia.
                 </div>
-        {% endif %}
+            {% endif %}
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="bg-light shadow border rounded-lg p-4">
+                <h3 class="font-weight-light">
+                ¡Envíe sus comentarios!
+                </h3>
 
-                <h2>Agrege sus comentarios</h2> 
-                        {{ form(comment_form) }}
+                {{ form(comment_form) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
