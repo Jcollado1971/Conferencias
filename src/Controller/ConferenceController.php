@@ -8,13 +8,14 @@ use App\Form\CommentFormType;
 use App\Message\CommentMessage;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
-//use App\SpamChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 
@@ -46,12 +47,6 @@ class ConferenceController extends AbstractController
         return $response;
     }
 
-
-
-
-
-
-
     #[Route('/conference_header', name: 'conference_header')]
     public function conferenceHeader(ConferenceRepository $conferenceRepository): Response
     {
@@ -62,16 +57,10 @@ class ConferenceController extends AbstractController
 
         $response->setSharedMaxAge(3600);
         return $response;
-
-
-
     }
 
-
-
-
     #[Route('/conference/{slug}', name: 'conference')]
-    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, string $photoDir): Response
+    public function show(Request $request, Conference $conference, CommentRepository $commentRepository, NotifierInterface $notifier, string $photoDir): Response
     {
 
         $comment = new Comment();
@@ -80,9 +69,6 @@ class ConferenceController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setConference($conference);
-
-
-
 
             if ($photo = $form['photo']->getData()) {
                 $filename = bin2hex(random_bytes(6)) . '.' . $photo->guessExtension();
@@ -111,9 +97,14 @@ class ConferenceController extends AbstractController
             $this->entityManager->flush();
             $this->bus->dispatch(new CommentMessage($comment->getId(), $context));
 
+            $notifier->send(new Notification('Gracias por los comentarios; su comentario se publicará después de la moderación.', ['browser']));
+
             return $this->redirectToRoute('conference', ['slug' => $conference->getSlug()]);
         }
 
+        if ($form->isSubmitted()) {
+            $notifier->send(new Notification('¿Puedes comprobar tu envío? Tiene algunos problemas.', ['browser']));
+        }
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentPaginator($conference, $offset);
 
